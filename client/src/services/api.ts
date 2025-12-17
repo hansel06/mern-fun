@@ -3,7 +3,6 @@ import type {
   LoginCredentials,
   SignupData,
   AuthResponse,
-  Event,
   EventsResponse,
   EventResponse,
 } from '../types';

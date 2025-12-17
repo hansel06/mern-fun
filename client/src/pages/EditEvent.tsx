@@ -1,4 +1,5 @@
-import { useState, useEffect, FormEvent, ChangeEvent } from 'react';
+import { useState, useEffect } from 'react';
+import type { FormEvent, ChangeEvent } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import type { Event } from '../types/event.types';
 import { eventsAPI } from '../services/api';

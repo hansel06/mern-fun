@@ -8,35 +8,34 @@ const app = express();
 // Middleware
 // CORS configuration - allow requests from frontend
 const allowedOrigins = [
-  'http://localhost:5173', // Vite dev server
-  'http://localhost:3000', // Alternative local port
-  'https://hansel-event-platform.vercel.app', // Production frontend
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'https://hansel-event-platform.vercel.app',
 ];
 
 const corsOptions = {
-  origin: function (origin, callback) {
+  origin: (origin, callback) => {
     // Allow requests with no origin (like mobile apps, Postman, curl, etc.)
-    if (!origin) return callback(null, true);
+    if (!origin) {
+      return callback(null, true);
+    }
     
     // Check if origin is in allowed list
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      // Log for debugging (remove in production if desired)
-      console.log('CORS blocked origin:', origin);
-      callback(new Error('Not allowed by CORS'));
+      console.log('CORS: Origin not allowed:', origin);
+      callback(null, true); // Temporarily allow all for debugging
+      // For production, use: callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true, // Allow cookies/auth headers
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  exposedHeaders: ['Content-Range', 'X-Content-Range'],
-  maxAge: 86400, // Cache preflight response for 24 hours
-  preflightContinue: false,
-  optionsSuccessStatus: 204
+  optionsSuccessStatus: 200
 };
 
-app.use(cors(corsOptions)); // Enable CORS for React frontend
+app.use(cors(corsOptions));
 app.use(express.json()); // Parse JSON request bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded request bodies
 

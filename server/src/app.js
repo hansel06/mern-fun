@@ -6,7 +6,19 @@ import eventRoutes from './routes/eventRoutes.js';
 const app = express();
 
 // Middleware
-app.use(cors()); // Enable CORS for React frontend
+// CORS configuration - allow requests from frontend
+const corsOptions = {
+  origin: [
+    'http://localhost:5173', // Vite dev server
+    'http://localhost:3000', // Alternative local port
+    'https://hansel-event-platform.vercel.app', // Production frontend
+  ],
+  credentials: true, // Allow cookies/auth headers
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions)); // Enable CORS for React frontend
 app.use(express.json()); // Parse JSON request bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded request bodies
 

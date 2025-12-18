@@ -16,6 +16,7 @@ const CreateEvent = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [generatingDescription, setGeneratingDescription] = useState<boolean>(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
     const { name, value } = e.target;
@@ -34,6 +35,43 @@ const CreateEvent = () => {
         setImagePreview(reader.result as string);
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  const handleGenerateDescription = async (): Promise<void> => {
+    if (!formData.title.trim() || !formData.location.trim()) {
+      setError('Please enter event title and location to generate description');
+      return;
+    }
+
+    setGeneratingDescription(true);
+    setError(null);
+
+    try {
+      const response = await eventsAPI.generateDescription({
+        title: formData.title,
+        location: formData.location,
+        date: formData.date || undefined,
+        capacity: formData.capacity || undefined,
+      });
+
+      if (response.success && response.description) {
+        setFormData((prev) => ({
+          ...prev,
+          description: response.description,
+        }));
+      }
+    } catch (err: unknown) {
+      if (err && typeof err === 'object' && 'response' in err) {
+        const axiosError = err as { response?: { data?: { message?: string } } };
+        setError(axiosError.response?.data?.message || 'Failed to generate description. Please try again.');
+      } else if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Failed to generate description. Please try again.');
+      }
+    } finally {
+      setGeneratingDescription(false);
     }
   };
 
@@ -127,7 +165,18 @@ const CreateEvent = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="description">Description *</label>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+              <label htmlFor="description">Description *</label>
+              <button
+                type="button"
+                onClick={handleGenerateDescription}
+                disabled={generatingDescription || !formData.title.trim() || !formData.location.trim()}
+                className="button button-ai"
+                style={{ fontSize: '0.85rem', padding: '0.5rem 1rem' }}
+              >
+                {generatingDescription ? '🔄 Generating...' : '✨ AI Generate'}
+              </button>
+            </div>
             <textarea
               id="description"
               name="description"
@@ -136,7 +185,7 @@ const CreateEvent = () => {
               required
               rows={5}
               className="form-textarea"
-              placeholder="Describe your event"
+              placeholder="Describe your event or click 'AI Generate' to create one automatically"
             />
           </div>
 

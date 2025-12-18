@@ -436,3 +436,114 @@ export const cancelRsvp = async (req, res) => {
   }
 };
 
+// @desc    Generate event description using AI (Gemini)
+// @route   POST /api/events/generate-description
+// @access  Protected
+export const generateDescription = async (req, res) => {
+  try {
+    const { title, location, date, capacity } = req.body;
+
+    // Validate required fields
+    if (!title || !location) {
+      return res.status(400).json({
+        success: false,
+        message: 'Title and location are required to generate description'
+      });
+    }
+
+    // Check if Gemini API key is configured
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(500).json({
+        success: false,
+        message: 'AI description generation is not configured. Please check server settings.'
+      });
+    }
+
+    // Build prompt for Gemini
+    const prompt = `Generate an engaging and professional event description for the following event:
+- Title: ${title}
+- Location: ${location}
+${date ? `- Date: ${new Date(date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}` : ''}
+${capacity ? `- Capacity: ${capacity} attendees` : ''}
+
+Please create a compelling description (2-3 sentences) that:
+1. Highlights the key aspects of the event
+2. Creates excitement and interest
+3. Provides relevant details about what attendees can expect
+4. Is professional yet engaging
+
+Description:`;
+
+    // Call Gemini API - Using gemini-2.5-flash (available for your account)
+    // Fallback options: gemini-flash-latest, gemini-2.5-pro
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
+    
+    const response = await fetch(geminiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contents: [{
+          role: 'user',
+          parts: [{
+            text: prompt
+          }]
+        }]
+      })
+    });
+
+    if (!response.ok) {
+      let errorData;
+      try {
+        errorData = await response.json();
+      } catch (e) {
+        errorData = { error: { message: await response.text() } };
+      }
+      console.error('Gemini API Error:', JSON.stringify(errorData, null, 2));
+      console.error('Response status:', response.status);
+      console.error('Response statusText:', response.statusText);
+      
+      // Handle overloaded service (503) - suggest retry
+      if (response.status === 503) {
+        return res.status(503).json({
+          success: false,
+          message: 'AI service is temporarily overloaded. Please try again in a few moments.'
+        });
+      }
+      
+      return res.status(500).json({
+        success: false,
+        message: errorData.error?.message || 'Failed to generate description. Please try again later.'
+      });
+    }
+
+    const data = await response.json();
+    
+    // Extract description from Gemini response
+    let description = '';
+    if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
+      description = data.candidates[0].content.parts[0].text.trim();
+    }
+
+    if (!description) {
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to generate description. Please try again.'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      description
+    });
+  } catch (error) {
+    console.error('Generate Description Error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to generate description. Please try again later.',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+

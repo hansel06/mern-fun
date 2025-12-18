@@ -109,6 +109,11 @@ export const eventsAPI = {
     const response = await api.post<EventResponse>(`/events/${id}/cancel`);
     return response.data;
   },
+
+  generateDescription: async (data: { title: string; location: string; date?: string; capacity?: number }): Promise<{ success: boolean; description: string }> => {
+    const response = await api.post<{ success: boolean; description: string }>('/events/generate-description', data);
+    return response.data;
+  },
 };
 
 export default api;

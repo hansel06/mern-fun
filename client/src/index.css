@@ -302,6 +302,19 @@ code {
   box-shadow: 0 15px 35px -5px rgba(239, 68, 68, 0.4);
 }
 
+.button-ai {
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  color: white;
+  box-shadow: 0 4px 15px -3px rgba(139, 92, 246, 0.3);
+  border: none;
+}
+
+.button-ai:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -5px rgba(139, 92, 246, 0.4);
+  background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+}
+
 /* Modern Forms */
 .form-container {
   max-width: 700px;

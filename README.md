@@ -137,6 +137,10 @@ Before you begin, ensure you have the following installed:
    CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
    CLOUDINARY_API_KEY=your_cloudinary_api_key
    CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+
+   # Gemini AI Configuration (optional - for AI description generation)
+   # Get free API key from https://makersuite.google.com/app/apikey
+   GEMINI_API_KEY=your_gemini_api_key_here
    ```
 
 3. **Get MongoDB Atlas Connection String**

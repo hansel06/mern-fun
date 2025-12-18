@@ -6,7 +6,8 @@ import {
   updateEvent,
   deleteEvent,
   rsvpEvent,
-  cancelRsvp
+  cancelRsvp,
+  generateDescription
 } from '../controllers/eventController.js';
 import protect from '../middleware/auth.js';
 import upload from '../middleware/upload.js';
@@ -26,6 +27,9 @@ router.delete('/:id', protect, deleteEvent);
 // RSVP routes (protected - must be authenticated)
 router.post('/:id/rsvp', protect, rsvpEvent);
 router.post('/:id/cancel', protect, cancelRsvp);
+
+// AI Description generation (protected - requires authentication)
+router.post('/generate-description', protect, generateDescription);
 
 export default router;
 

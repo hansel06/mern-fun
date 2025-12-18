@@ -18,6 +18,7 @@ router.get('/', getEvents);
 router.get('/:id', getEvent);
 
 // Protected routes (require authentication)
+// Multer errors are automatically passed to Express error handlers
 router.post('/', protect, upload.single('image'), createEvent);
 router.put('/:id', protect, upload.single('image'), updateEvent);
 router.delete('/:id', protect, deleteEvent);

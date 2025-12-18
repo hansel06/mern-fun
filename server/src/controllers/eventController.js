@@ -7,8 +7,14 @@ import mongoose from 'mongoose';
 // @access  Protected
 export const createEvent = async (req, res) => {
   try {
+    console.log('Create Event - Request received');
+    console.log('Has file:', !!req.file);
+    console.log('Request body keys:', Object.keys(req.body));
+    console.log('User ID:', req.user?.id);
+    
     // Check if image is provided
     if (!req.file) {
+      console.error('Create Event - No file provided');
       return res.status(400).json({
         success: false,
         message: 'Please provide an image'
@@ -83,6 +89,9 @@ export const createEvent = async (req, res) => {
     });
   } catch (error) {
     console.error('Create Event Error:', error);
+    console.error('Error name:', error.name);
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
     
     // Handle validation errors
     if (error.name === 'ValidationError') {
@@ -94,17 +103,26 @@ export const createEvent = async (req, res) => {
     }
 
     // Handle Cloudinary errors
-    if (error.message && error.message.includes('cloudinary')) {
+    if (error.message && (error.message.includes('cloudinary') || error.message.includes('Cloudinary'))) {
       return res.status(400).json({
         success: false,
-        message: 'Image upload failed. Please check Cloudinary configuration.'
+        message: 'Image upload failed. Please check Cloudinary configuration.',
+        error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      });
+    }
+
+    // Handle Multer errors
+    if (error.name === 'MulterError') {
+      return res.status(400).json({
+        success: false,
+        message: error.message || 'File upload error'
       });
     }
 
     res.status(500).json({
       success: false,
       message: 'Server error',
-      error: error.message || 'Unknown error'
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 };

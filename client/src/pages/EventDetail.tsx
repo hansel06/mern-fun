@@ -67,6 +67,9 @@ const EventDetail = () => {
   // Check if event is full
   const isFull = event ? event.attendees.length >= event.capacity : false;
 
+  // Check if event date has passed
+  const isPastEvent = event ? new Date(event.date) < new Date() : false;
+
   const handleRSVP = async (): Promise<void> => {
     if (!id) return;
     setRsvpLoading(true);
@@ -176,7 +179,8 @@ const EventDetail = () => {
       <div className="event-detail">
         <div className="event-detail-image-container">
           <img src={event.imageUrl} alt={event.title} className="event-detail-image" />
-          {isFull && <div className="event-badge-full">Event Full</div>}
+          {isPastEvent && <div className="event-badge-past">Event Over</div>}
+          {!isPastEvent && isFull && <div className="event-badge-full">Event Full</div>}
         </div>
 
         <div className="event-detail-content">
@@ -225,7 +229,13 @@ const EventDetail = () => {
 
           {user && !isCreator && (
             <div className="event-detail-rsvp">
-              {userIsAttending ? (
+              {isPastEvent ? (
+                <div className="rsvp-status-container">
+                  <div className="rsvp-status-badge event-over-badge">
+                    ⏰ This event has ended
+                  </div>
+                </div>
+              ) : userIsAttending ? (
                 <div className="rsvp-status-container">
                   <div className="rsvp-status-badge">
                     ✅ You're attending this event!

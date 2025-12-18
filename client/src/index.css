@@ -25,7 +25,7 @@
   --gradient-hero: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
   
   /* Neutrals - Slightly warmer */
-  --bg-primary: #ffffff;
+  --bg-primary: #d9d9d9;
   --bg-secondary: #f8fafc;
   --bg-tertiary: #f1f5f9;
   --bg-glass: rgba(255, 255, 255, 0.7);
@@ -70,7 +70,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(to bottom, #f8fafc 0%, #f1f5f9 100%);
+  background: #d9d9d9;
   background-attachment: fixed;
   color: var(--text-primary);
   line-height: 1.6;
@@ -108,6 +108,23 @@ code {
   align-items: center;
 }
 
+.merry-christmas {
+  font-size: 0.85rem;
+  color: #ef4444;
+  font-weight: 600;
+  animation: twinkle 2s ease-in-out infinite;
+  white-space: nowrap;
+}
+
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
 .nav-logo {
   font-size: 1.5rem;
   font-weight: 800;
@@ -118,6 +135,9 @@ code {
   text-decoration: none;
   transition: transform var(--transition-base);
   letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
 }
 
 .nav-logo:hover {
@@ -258,7 +278,7 @@ code {
 }
 
 .button-secondary {
-  background: white;
+  background: #d9d9d9;
   color: var(--text-primary);
   border: 2px solid var(--border-color);
   box-shadow: var(--shadow-sm);
@@ -286,7 +306,7 @@ code {
 .form-container {
   max-width: 700px;
   margin: var(--spacing-xl) auto;
-  background: white;
+  background: #d9d9d9;
   padding: var(--spacing-2xl);
   border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-2xl);
@@ -332,7 +352,7 @@ code {
 .form-textarea:focus {
   outline: none;
   border-color: var(--primary-color);
-  background: white;
+  background: #d9d9d9;
   box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1), var(--shadow-md);
   transform: translateY(-1px);
 }
@@ -355,7 +375,7 @@ code {
 
 .form-input-file:hover {
   border-color: var(--primary-color);
-  background: white;
+  background: #d9d9d9;
   box-shadow: var(--shadow-md);
 }
 
@@ -414,7 +434,7 @@ code {
 }
 
 .auth-card {
-  background: white;
+  background: #d9d9d9;
   padding: var(--spacing-2xl);
   border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-2xl);
@@ -522,7 +542,7 @@ code {
 
 /* Modern Event Card with Glassmorphism */
 .event-card {
-  background: white;
+  background: #d9d9d9;
   border-radius: var(--radius-2xl);
   overflow: hidden;
   box-shadow: var(--shadow-lg);
@@ -590,6 +610,10 @@ code {
   letter-spacing: 0.5px;
 }
 
+.event-card-badge-past {
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+}
+
 .event-card-content {
   padding: var(--spacing-xl);
   flex: 1;
@@ -641,7 +665,7 @@ code {
 .event-detail {
   max-width: 900px;
   margin: var(--spacing-xl) auto;
-  background: white;
+  background: #d9d9d9;
   border-radius: var(--radius-2xl);
   overflow: hidden;
   box-shadow: var(--shadow-2xl);
@@ -667,6 +691,20 @@ code {
   top: var(--spacing-lg);
   right: var(--spacing-lg);
   background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
+  color: white;
+  padding: var(--spacing-sm) var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  font-weight: 700;
+  font-size: 1rem;
+  box-shadow: var(--shadow-lg);
+  letter-spacing: 0.5px;
+}
+
+.event-badge-past {
+  position: absolute;
+  top: var(--spacing-lg);
+  right: var(--spacing-lg);
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
   color: white;
   padding: var(--spacing-sm) var(--spacing-xl);
   border-radius: var(--radius-lg);
@@ -782,6 +820,10 @@ code {
   letter-spacing: 0.5px;
 }
 
+.rsvp-status-badge.event-over-badge {
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+}
+
 .login-prompt {
   text-align: center;
   color: var(--text-secondary);
@@ -854,6 +896,102 @@ code {
   font-size: 1.05rem;
 }
 
+/* Alert Modal */
+.alert-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.alert-modal {
+  background: white;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-2xl);
+  max-width: 400px;
+  width: 90%;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.alert-modal-error {
+  border-top: 4px solid var(--danger-color);
+}
+
+.alert-modal-success {
+  border-top: 4px solid var(--success-color);
+}
+
+.alert-modal-info {
+  border-top: 4px solid var(--primary-color);
+}
+
+.alert-modal-content {
+  padding: var(--spacing-2xl);
+  text-align: center;
+}
+
+.alert-modal-icon {
+  font-size: 3rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.alert-modal-message {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-xl);
+  line-height: 1.5;
+}
+
+.alert-modal-close {
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  padding: var(--spacing-sm) var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-md);
+}
+
+.alert-modal-close:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.alert-modal-error .alert-modal-close {
+  background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
+}
+
 /* Error Messages */
 .error-message {
   background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
@@ -868,7 +1006,7 @@ code {
 .error-container {
   text-align: center;
   padding: var(--spacing-2xl);
-  background: white;
+  background: #d9d9d9;
   border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-xl);
   border: 1px solid var(--border-color);
@@ -883,7 +1021,7 @@ code {
 .empty-state {
   text-align: center;
   padding: var(--spacing-2xl);
-  background: white;
+  background: #d9d9d9;
   border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-md);
   border: 1px solid var(--border-color);
@@ -902,7 +1040,7 @@ code {
 
 /* Modern Footer */
 .footer {
-  background: white;
+  background: #d9d9d9;
   border-top: 2px solid var(--border-color);
   margin-top: var(--spacing-2xl);
   padding: var(--spacing-xl) var(--spacing-md);
@@ -945,6 +1083,15 @@ code {
 .footer-link:hover {
   color: var(--primary-hover);
   text-decoration: underline;
+}
+
+.merry-christmas-footer {
+  font-size: 0.85rem;
+  color: #ef4444;
+  font-weight: 600;
+  animation: twinkle 2s ease-in-out infinite;
+  margin-top: var(--spacing-xs);
+  text-align: center;
 }
 
 /* Responsive Design */

@@ -315,6 +315,34 @@ export const rsvpEvent = async (req, res) => {
       });
     }
 
+    // First, check if event exists and if it's in the past
+    const originalEvent = await Event.findById(id);
+    
+    if (!originalEvent) {
+      return res.status(404).json({
+        success: false,
+        message: 'Event not found'
+      });
+    }
+
+    // Check if event date has passed
+    const eventDate = new Date(originalEvent.date);
+    const now = new Date();
+    if (eventDate < now) {
+      return res.status(400).json({
+        success: false,
+        message: 'Cannot RSVP to past events'
+      });
+    }
+
+    // Check if user already RSVPed
+    if (originalEvent.attendees.some(attendee => attendee.toString() === userId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'You have already RSVPed to this event'
+      });
+    }
+
     // Atomic operation - checks capacity and adds user in one database operation
     const event = await Event.findOneAndUpdate(
       {
@@ -328,27 +356,8 @@ export const rsvpEvent = async (req, res) => {
       { new: true }  // Return updated document
     );
 
-    // If update failed, determine the reason
+    // If update failed, must be capacity full
     if (!event) {
-      // Check if event exists and get failure reason
-      const originalEvent = await Event.findById(id);
-
-      if (!originalEvent) {
-        return res.status(404).json({
-          success: false,
-          message: 'Event not found'
-        });
-      }
-
-      // Check if user already RSVPed
-      if (originalEvent.attendees.some(attendee => attendee.toString() === userId)) {
-        return res.status(400).json({
-          success: false,
-          message: 'You have already RSVPed to this event'
-        });
-      }
-
-      // Must be capacity full
       return res.status(400).json({
         success: false,
         message: 'Event is full'

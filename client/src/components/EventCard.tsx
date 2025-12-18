@@ -28,12 +28,14 @@ const EventCard = ({ event }: EventCardProps) => {
   const attendeeCount = event.attendees.length;
   const spotsLeft = event.capacity - attendeeCount;
   const isFull = spotsLeft === 0;
+  const isPastEvent = new Date(event.date) < new Date();
 
   return (
     <Link to={`/events/${event._id}`} className="event-card">
       <div className="event-card-image-container">
         <img src={event.imageUrl} alt={event.title} className="event-card-image" />
-        {isFull && <div className="event-card-badge">Full</div>}
+        {isPastEvent && <div className="event-card-badge event-card-badge-past">Event Over</div>}
+        {!isPastEvent && isFull && <div className="event-card-badge">Full</div>}
       </div>
       <div className="event-card-content">
         <h3 className="event-card-title">{event.title}</h3>

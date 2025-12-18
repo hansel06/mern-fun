@@ -3,6 +3,7 @@ import type { FormEvent } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
+import AlertModal from '../components/AlertModal';
 
 const Login = () => {
   const [email, setEmail] = useState<string>('');
@@ -22,11 +23,19 @@ const Login = () => {
       login(response.token, response.user);
       navigate('/events');
     } catch (err: unknown) {
-      if (err instanceof Error) {
+      if (err && typeof err === 'object' && 'response' in err) {
+        const axiosError = err as { response?: { data?: { message?: string }; status?: number } };
+        const status = axiosError.response?.status;
+        const message = axiosError.response?.data?.message || 'Login failed';
+        
+        // Show popup for authentication errors (401)
+        if (status === 401 || message.toLowerCase().includes('invalid') || message.toLowerCase().includes('email') || message.toLowerCase().includes('password')) {
+          setError('Invalid email or password. Please try again.');
+        } else {
+          setError(message);
+        }
+      } else if (err instanceof Error) {
         setError(err.message);
-      } else if (err && typeof err === 'object' && 'response' in err) {
-        const axiosError = err as { response?: { data?: { message?: string } } };
-        setError(axiosError.response?.data?.message || 'Login failed. Please check your credentials.');
       } else {
         setError('An unexpected error occurred. Please try again.');
       }
@@ -37,11 +46,17 @@ const Login = () => {
 
   return (
     <div className="auth-container">
+      {error && (
+        <AlertModal
+          message={error}
+          type="error"
+          onClose={() => setError(null)}
+          autoClose={5000}
+        />
+      )}
       <div className="auth-card">
         <h1 className="auth-title">Login</h1>
         <p className="auth-subtitle">Welcome back! Please login to your account.</p>
-
-        {error && <div className="error-message">{error}</div>}
 
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">

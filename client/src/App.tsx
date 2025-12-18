@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import Snowfall from 'react-snowfall';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
@@ -16,6 +17,21 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 9999 }}>
+          <Snowfall
+            color="#ffffff"
+            snowflakeCount={150}
+            speed={[0.5, 3]}
+            wind={[-0.5, 2]}
+            radius={[0.5, 3]}
+            style={{
+              position: 'fixed',
+              width: '100vw',
+              height: '100vh',
+              zIndex: 9999
+            }}
+          />
+        </div>
         <Navbar />
         <Routes>
           <Route path="/login" element={<Login />} />

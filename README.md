@@ -1,12 +1,19 @@
-# Mini Event Platform - MERN Stack Assignment
+# Event Management Platform (MERN Stack)
 
 A full-stack web application for creating, viewing, and RSVPing to events. Built with MongoDB, Express.js, React.js, and Node.js.
+
+## 🌐 Live Application
+
+- **Frontend:** [https://hansel-event-platform.vercel.app](https://hansel-event-platform.vercel.app)
+- **Backend API:** [https://mern-fun-backend.onrender.com](https://mern-fun-backend.onrender.com)
+- **API Health Check:** [https://mern-fun-backend.onrender.com/](https://mern-fun-backend.onrender.com/)
 
 ## 📋 Table of Contents
 
 - [Features](#features)
 - [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
+- [Project Overview](#project-overview)
+- [Live URLs](#live-application)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
@@ -20,20 +27,17 @@ A full-stack web application for creating, viewing, and RSVPing to events. Built
 
 ## ✨ Features
 
-### Implemented
-- ✅ User Authentication (Sign Up & Login with JWT)
-- ✅ Event CRUD Operations (Create, Read, Update, Delete)
-- ✅ Image Upload for Events (Cloudinary integration)
-- ✅ RSVP System with Capacity Enforcement
-- ✅ Concurrency-Safe RSVP Logic (Atomic MongoDB operations)
-- ✅ Protected Routes (JWT authentication)
-- ✅ Ownership-based Authorization (Only creators can edit/delete events)
-
-### Frontend (Phase 5)
-- ⏳ React Frontend Implementation
-- ⏳ Responsive UI (Desktop, Tablet, Mobile)
-- ⏳ Search & Filter Events
-- ⏳ User Dashboard
+### Core Features
+- ✅ **User Authentication** - Secure sign up and login with JWT tokenization
+- ✅ **Event CRUD Operations** - Create, view, edit, and delete events
+- ✅ **Image Upload** - Cloudinary integration for event images
+- ✅ **RSVP System** - Join and leave events with capacity enforcement
+- ✅ **Concurrency-Safe RSVP** - Atomic MongoDB operations prevent overbooking
+- ✅ **Protected Routes** - JWT-based authentication middleware
+- ✅ **Ownership Authorization** - Only event creators can edit/delete their events
+- ✅ **Responsive UI** - Fully responsive design (Desktop, Tablet, Mobile)
+- ✅ **AI Description Generation** - Auto-generate event descriptions using Google Gemini AI
+- ✅ **Past Event Handling** - Prevents RSVPing to past events with visual indicators
 
 ---
 
@@ -42,18 +46,41 @@ A full-stack web application for creating, viewing, and RSVPing to events. Built
 ### Backend
 - **Node.js** - JavaScript runtime
 - **Express.js** - Web framework
-- **MongoDB** - Database (MongoDB Atlas)
+- **MongoDB Atlas** - Cloud-hosted database
 - **Mongoose** - MongoDB ODM
-- **JWT** - Authentication tokens
-- **Bcryptjs** - Password hashing
-- **Multer** - File upload handling
-- **Cloudinary** - Image hosting
+- **JWT (jsonwebtoken)** - Authentication tokens
+- **Bcryptjs** - Password hashing (salt rounds: 12)
+- **Multer** - File upload handling (in-memory storage)
+- **Cloudinary** - Cloud image hosting
+- **Google Gemini AI** - AI-powered description generation
 
 ### Frontend
 - **React.js** - UI framework
-- (Additional frontend dependencies will be added in Phase 5)
+- **TypeScript** - Type-safe JavaScript
+- **Vite** - Fast build tool and dev server
+- **React Router v6** - Client-side routing
+- **Axios** - HTTP client with interceptors
+- **Context API** - Global state management
 
 ---
+
+## 📖 Project Overview
+
+This is a full-stack MERN application that allows users to:
+
+1. **Sign up and log in** securely using JWT tokens
+2. **Create events** with details like title, description, date, location, capacity, and images
+3. **Browse all events** on a public dashboard
+4. **RSVP to events** with strict capacity enforcement
+5. **Manage their events** - edit and delete only events they created
+6. **Use AI assistance** - auto-generate event descriptions using Google Gemini AI
+
+The application demonstrates:
+- Secure authentication and authorization
+- CRUD operations with proper ownership checks
+- **Critical business logic** - concurrency-safe RSVP system preventing overbooking
+- Modern, responsive UI with TypeScript
+- Production deployment on Render (backend) and Vercel (frontend)
 
 ## 📁 Project Structure
 
@@ -73,7 +100,16 @@ MERN/
 │   ├── package.json
 │   └── server.js          # Entry point
 │
-└── client/                # Frontend React app (Phase 5)
+└── client/                # Frontend React app
+    ├── src/
+    │   ├── components/    # Reusable components
+    │   ├── pages/         # Page components
+    │   ├── context/       # React Context (Auth)
+    │   ├── services/      # API service layer
+    │   ├── types/         # TypeScript type definitions
+    │   └── utils/         # Utility functions
+    ├── package.json
+    └── vite.config.ts
 ```
 
 ---
@@ -105,7 +141,7 @@ Before you begin, ensure you have the following installed:
    npm install
    ```
 
-3. **Install frontend dependencies** (when frontend is ready)
+3. **Install frontend dependencies**
    ```bash
    cd ../client
    npm install
@@ -187,22 +223,39 @@ Before you begin, ensure you have the following installed:
    - Open browser: `http://localhost:5000`
    - You should see: `{"message": "Event Platform API is running", "status": "success"}`
 
-#### Frontend (Phase 5)
+#### Frontend Client
 
-```bash
-cd client
-npm start
-```
+1. **Navigate to client directory**
+   ```bash
+   cd client
+   ```
 
-Frontend will run on `http://localhost:3000` (default)
+2. **Start development server**
+   ```bash
+   npm run dev
+   ```
+
+   The frontend will run on `http://localhost:5173` (Vite default port)
+   
+3. **Build for production**
+   ```bash
+   npm run build
+   ```
 
 ---
 
 ## 📡 API Documentation
 
 ### Base URL
+
+**Local Development:**
 ```
 http://localhost:5000/api
+```
+
+**Production:**
+```
+https://mern-fun-backend.onrender.com/api
 ```
 
 ### Endpoints
@@ -360,6 +413,29 @@ http://localhost:5000/api
 - **Error Responses:**
   - `400` - "You are not RSVPed to this event"
   - `404` - "Event not found"
+
+#### AI Description Generation
+
+**POST /api/events/generate-description**
+- Generate event description using AI (protected - requires JWT token)
+- **Headers:** `Authorization: Bearer <token>`
+- **Request Body:**
+  ```json
+  {
+    "title": "Summer Party",
+    "location": "Beach Park",
+    "date": "2024-07-15T18:00:00Z",
+    "capacity": 50
+  }
+  ```
+- **Response (200):**
+  ```json
+  {
+    "success": true,
+    "description": "Join us for an exciting summer party at Beach Park..."
+  }
+  ```
+- **Note:** `date` and `capacity` are optional. `title` and `location` are required.
 
 ---
 
@@ -539,22 +615,54 @@ This implementation fully satisfies the assignment requirement for handling capa
 
 ### Backend Deployment (Render)
 
-1. Push code to GitHub
-2. Connect repository to Render
-3. Add environment variables in Render dashboard
-4. Deploy
+1. **Push code to GitHub**
+   ```bash
+   git add .
+   git commit -m "Deploy backend"
+   git push origin main
+   ```
+
+2. **Create new Web Service on Render**
+   - Connect your GitHub repository
+   - Set build command: `cd server && npm install`
+   - Set start command: `cd server && npm start`
+   - Set environment: `Node`
+
+3. **Add environment variables in Render dashboard:**
+   - `PORT` (optional, defaults to 5000)
+   - `MONGODB_URI`
+   - `JWT_SECRET`
+   - `CLOUDINARY_CLOUD_NAME`
+   - `CLOUDINARY_API_KEY`
+   - `CLOUDINARY_API_SECRET`
+   - `GEMINI_API_KEY` (optional, for AI features)
+
+4. **Deploy** - Render will automatically deploy on every push
+
+**Live Backend:** [https://mern-fun-backend.onrender.com](https://mern-fun-backend.onrender.com)
 
 ### Frontend Deployment (Vercel)
 
-1. Push code to GitHub
-2. Connect repository to Vercel
-3. Configure build settings
-4. Add backend API URL as environment variable
-5. Deploy
+1. **Push code to GitHub**
+
+2. **Import project to Vercel**
+   - Connect your GitHub repository
+   - Set root directory to `client`
+   - Framework preset: Vite
+   - Build command: `npm run build`
+   - Output directory: `dist`
+
+3. **Add environment variables:**
+   - `VITE_API_URL` = `https://mern-fun-backend.onrender.com/api`
+
+4. **Deploy** - Vercel will automatically deploy on every push
+
+**Live Frontend:** [https://hansel-event-platform.vercel.app](https://hansel-event-platform.vercel.app)
 
 ### Database
 
-- MongoDB Atlas (cloud-hosted, already configured)
+- **MongoDB Atlas** - Cloud-hosted MongoDB (free tier available)
+- Network Access: Configure `0.0.0.0/0` to allow Render servers to connect
 
 ---
 
@@ -568,7 +676,7 @@ This implementation fully satisfies the assignment requirement for handling capa
 
 ## 👤 Author
 
-[Your Name]
+Hansel Thomas Dsouza
 
 ---
 

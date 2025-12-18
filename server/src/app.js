@@ -5,15 +5,15 @@ import eventRoutes from './routes/eventRoutes.js';
 
 const app = express();
 
-// Middleware
-// CORS configuration - allow requests from frontend
+// CORS configuration - MUST be before other middleware
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
-  'https://hansel-event-platform.vercel.app',
+  'https://hansel-event-platform.vercel.app/',
 ];
 
-const corsOptions = {
+// Configure CORS with explicit options
+app.use(cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (like mobile apps, Postman, curl, etc.)
     if (!origin) {
@@ -24,20 +24,21 @@ const corsOptions = {
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      console.log('CORS: Origin not allowed:', origin);
-      callback(null, true); // Temporarily allow all for debugging
-      // For production, use: callback(new Error('Not allowed by CORS'));
+      // For now, allow all origins (can restrict later if needed)
+      callback(null, true);
     }
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  optionsSuccessStatus: 200
-};
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+  exposedHeaders: ['Content-Length', 'Content-Type'],
+  optionsSuccessStatus: 200,
+  preflightContinue: false
+}));
 
-app.use(cors(corsOptions));
-app.use(express.json()); // Parse JSON request bodies
-app.use(express.urlencoded({ extended: true })); // Parse URL-encoded request bodies
+// Body parsing middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Test route
 app.get('/', (req, res) => {

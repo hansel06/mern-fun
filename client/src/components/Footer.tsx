@@ -10,7 +10,6 @@ const Footer = () => {
             hanseldsouza6904@gmail.com
           </a>
         </p>
-        <p className="merry-christmas-footer">🎄 Merry Christmas!</p>
       </div>
     </footer>
   );

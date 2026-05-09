@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import Button from '../components/ui/Button';
 import EventCard from '../components/EventCard';
 import SkeletonCard from '../components/ui/SkeletonCard';
+import MagicRings from '../components/ui/MagicRings';
 import axios from 'axios';
 
 const staggerContainer = {
@@ -46,8 +47,35 @@ const LandingPage = () => {
     <div className="flex flex-col min-h-screen bg-surface">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-surface-elevated border-b border-border py-24 sm:py-40">
-        {/* Animated Background Mesh */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* MagicRings interactive background */}
+        <div className="absolute inset-0 pointer-events-none z-0">
+          <div className="w-full h-full pointer-events-auto opacity-70">
+            <MagicRings
+              color="#1E3A5F"
+              colorTwo="#4ECDC4"
+              ringCount={5}
+              speed={1.5}
+              attenuation={8}
+              lineThickness={3}
+              baseRadius={0.4}
+              radiusStep={0.15}
+              scaleRate={0.08}
+              opacity={0.8}
+              blur={2}
+              noiseAmount={0.05}
+              rotation={0}
+              ringGap={1.2}
+              followMouse={true}
+              mouseInfluence={0.2}
+              hoverScale={1.1}
+              parallax={0.1}
+              clickBurst={true}
+            />
+          </div>
+        </div>
+        
+        {/* Animated Background Mesh overlay */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
           <div className="absolute -top-[40%] -left-[10%] w-[70%] h-[70%] rounded-full bg-primary/20 blur-[120px]" />
           <div className="absolute top-[20%] -right-[10%] w-[60%] h-[60%] rounded-full bg-accent/20 blur-[120px]" />
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px]"></div>
@@ -57,19 +85,19 @@ const LandingPage = () => {
           variants={staggerContainer}
           initial="hidden"
           animate="show"
-          className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10"
+          className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10 pointer-events-none"
         >
-          <motion.div variants={fadeUp} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-8 border border-primary/20">
+          <motion.div variants={fadeUp} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-8 border border-primary/20 pointer-events-auto">
             <Sparkles className="w-4 h-4" /> The Next Generation of Events
           </motion.div>
-          <motion.h1 variants={fadeUp} className="text-5xl md:text-7xl font-extrabold tracking-tight text-text-primary mb-6 leading-tight">
+          <motion.h1 variants={fadeUp} className="text-5xl md:text-7xl font-extrabold tracking-tight text-text-primary mb-6 leading-tight pointer-events-auto">
             Create. Connect. <br className="hidden md:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-accent to-primary animate-gradient-x">Celebrate.</span>
           </motion.h1>
-          <motion.p variants={fadeUp} className="mt-4 max-w-2xl text-lg md:text-xl text-text-secondary mx-auto mb-10 leading-relaxed">
+          <motion.p variants={fadeUp} className="mt-4 max-w-2xl text-lg md:text-xl text-text-secondary mx-auto mb-10 leading-relaxed pointer-events-auto">
             The all-in-one platform to host, manage, and discover amazing events happening near you. Powered by Gemini AI for effortless event creation.
           </motion.p>
-          <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-4 justify-center">
+          <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-4 justify-center pointer-events-auto">
             <Link to="/events">
               <Button variant="primary" className="w-full sm:w-auto text-lg px-8 py-4">
                 Browse Events

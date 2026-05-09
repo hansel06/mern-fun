@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
-import Snowfall from 'react-snowfall';
+
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -79,21 +79,7 @@ function App() {
       <ThemeProvider>
         <AuthProvider>
           <BrowserRouter>
-            <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 9999 }}>
-              <Snowfall
-                color="#ffffff"
-                snowflakeCount={150}
-                speed={[0.5, 3]}
-                wind={[-0.5, 2]}
-                radius={[0.5, 3]}
-                style={{
-                  position: 'fixed',
-                  width: '100vw',
-                  height: '100vh',
-                  zIndex: 9999
-                }}
-              />
-            </div>
+
             <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
             <div className="flex flex-col min-h-screen">
               <Navbar />

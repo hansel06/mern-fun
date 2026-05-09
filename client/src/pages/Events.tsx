@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { Event } from '../types/event.types';
 import { eventsAPI } from '../services/api';
+import { motion } from 'framer-motion';
 import EventCard from '../components/EventCard';
 import SkeletonCard from '../components/ui/SkeletonCard';
 
@@ -151,11 +152,30 @@ const Events = () => {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <motion.div 
+              initial="hidden"
+              animate="show"
+              variants={{
+                hidden: { opacity: 0 },
+                show: {
+                  opacity: 1,
+                  transition: { staggerChildren: 0.15 }
+                }
+              }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
               {events.map((event) => (
-                <EventCard key={event._id} event={event} />
+                <motion.div
+                  key={event._id}
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    show: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+                  }}
+                >
+                  <EventCard event={event} />
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
 
             {/* Pagination */}
             {totalPages > 1 && (

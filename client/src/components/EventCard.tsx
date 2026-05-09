@@ -32,17 +32,17 @@ const EventCard = ({ event, compact = false }: EventCardProps) => {
   return (
     <Link 
       to={`/events/${event._id}`} 
-      className={`group block bg-surface-elevated rounded-xl border border-border overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1 relative ${compact ? 'max-w-sm' : ''}`}
+      className={`group block bg-surface-elevated rounded-3xl border border-border overflow-hidden transition-all duration-500 ease-out hover:shadow-2xl hover:-translate-y-2 relative ${compact ? 'max-w-sm' : ''}`}
     >
       {/* Top Banner Line */}
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-accent scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300 z-10" />
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-accent scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500 ease-out z-10" />
 
       {/* Image Section */}
       <div className={`relative w-full ${compact ? 'aspect-[2/1]' : 'aspect-video'} bg-surface overflow-hidden`}>
         <img 
           src={event.imageUrl || 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4'} 
           alt={event.title} 
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out" 
         />
         
         {/* Category Badge */}

@@ -21,7 +21,7 @@ export default {
         border: 'rgb(var(--color-border) / <alpha-value>)'
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
       },
     },
   },

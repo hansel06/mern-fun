@@ -3,6 +3,7 @@ import type { FormEvent } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
+import { motion } from 'framer-motion';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
 
@@ -39,8 +40,27 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-[85vh] flex items-center justify-center bg-surface py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-surface-elevated p-8 md:p-10 rounded-3xl shadow-xl border border-border">
+    <div className="min-h-[85vh] flex items-center justify-center bg-surface py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Animated Background Orbs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div 
+          animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-primary/20 blur-[100px]" 
+        />
+        <motion.div 
+          animate={{ scale: [1, 1.5, 1], opacity: [0.2, 0.4, 0.2] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          className="absolute top-[40%] -right-[10%] w-[60%] h-[60%] rounded-full bg-accent/20 blur-[120px]" 
+        />
+      </div>
+
+      <motion.div 
+        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="max-w-md w-full space-y-8 bg-surface-elevated/80 backdrop-blur-xl p-8 md:p-10 rounded-3xl shadow-2xl border border-border/50 relative z-10"
+      >
         <div className="text-center">
           <h2 className="mt-2 text-3xl font-extrabold text-text-primary tracking-tight">
             Welcome Back
@@ -78,9 +98,13 @@ const Login = () => {
 
           {/* Catch-all error for general failures */}
           {error && !error.toLowerCase().includes('email') && !error.toLowerCase().includes('password') && !error.toLowerCase().includes('invalid') && (
-            <div className="text-sm text-danger text-center bg-danger/10 p-3 rounded-lg">
+            <motion.div 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-sm text-danger text-center bg-danger/10 p-3 rounded-xl border border-danger/20"
+            >
               {error}
-            </div>
+            </motion.div>
           )}
 
           <div>
@@ -103,7 +127,7 @@ const Login = () => {
             </Link>
           </p>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

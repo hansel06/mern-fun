@@ -55,12 +55,12 @@ const LandingPage = () => {
               colorTwo="#4ECDC4"
               ringCount={5}
               speed={1.5}
-              attenuation={8}
-              lineThickness={3}
+              attenuation={6}
+              lineThickness={4}
               baseRadius={0.4}
               radiusStep={0.15}
               scaleRate={0.08}
-              opacity={0.8}
+              opacity={1}
               blur={2}
               noiseAmount={0.05}
               rotation={0}

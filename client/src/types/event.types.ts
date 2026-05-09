@@ -4,6 +4,7 @@ export interface Event {
   _id: string;
   title: string;
   description: string;
+  category?: string;
   date: string; // ISO date string
   location: string;
   capacity: number;

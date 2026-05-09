@@ -1,18 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Calendar, MapPin, Users, User } from 'lucide-react';
-
-interface Event {
-  _id: string;
-  title: string;
-  description: string;
-  date: string;
-  location: string;
-  capacity: number;
-  imageUrl: string;
-  category?: string;
-  createdBy: any;
-  attendees: string[];
-}
+import type { Event } from '../types/event.types';
 
 interface EventCardProps {
   event: Event;

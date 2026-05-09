@@ -116,5 +116,28 @@ export const eventsAPI = {
   },
 };
 
+// Users API
+export const usersAPI = {
+  getMyEvents: async (): Promise<EventsResponse> => {
+    const response = await api.get<EventsResponse>('/users/my-events');
+    return response.data;
+  },
+  
+  getMyRsvps: async (): Promise<EventsResponse> => {
+    const response = await api.get<EventsResponse>('/users/my-rsvps');
+    return response.data;
+  },
+  
+  updateProfile: async (data: { name: string }): Promise<AuthResponse> => {
+    const response = await api.put<AuthResponse>('/users/profile', data);
+    return response.data;
+  },
+  
+  updatePassword: async (data: { currentPassword?: string; newPassword?: string }): Promise<{ success: boolean; message: string }> => {
+    const response = await api.put('/users/password', data);
+    return response.data;
+  }
+};
+
 export default api;
 

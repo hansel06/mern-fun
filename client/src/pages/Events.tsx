@@ -3,7 +3,7 @@ import type { Event } from '../types/event.types';
 import { eventsAPI } from '../services/api';
 import EventCard from '../components/EventCard';
 import SkeletonCard from '../components/ui/SkeletonCard';
-import Input from '../components/ui/Input';
+
 import Button from '../components/ui/Button';
 import { Search, SlidersHorizontal, ChevronLeft, ChevronRight } from 'lucide-react';
 

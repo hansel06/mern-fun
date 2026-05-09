@@ -1,12 +1,21 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import type { FormEvent, ChangeEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { eventsAPI } from '../services/api';
+import Input from '../components/ui/Input';
+import Button from '../components/ui/Button';
+import { Sparkles, UploadCloud, ArrowLeft, Image as ImageIcon } from 'lucide-react';
+import { toast } from 'react-hot-toast';
+
+const CATEGORIES = ['Music', 'Tech', 'Sports', 'Networking', 'Art', 'Food', 'Other'];
 
 const CreateEvent = () => {
   const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [formData, setFormData] = useState({
     title: '',
+    category: 'Other',
     description: '',
     date: '',
     location: '',
@@ -14,11 +23,10 @@ const CreateEvent = () => {
   });
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [generatingDescription, setGeneratingDescription] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
+  const [generatingDescription, setGeneratingDescription] = useState(false);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -26,9 +34,13 @@ const CreateEvent = () => {
     }));
   };
 
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>): void => {
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Image size must be less than 5MB');
+        return;
+      }
       setImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -38,15 +50,13 @@ const CreateEvent = () => {
     }
   };
 
-  const handleGenerateDescription = async (): Promise<void> => {
+  const handleGenerateDescription = async () => {
     if (!formData.title.trim() || !formData.location.trim()) {
-      setError('Please enter event title and location to generate description');
+      toast.error('Please enter an event title and location first');
       return;
     }
 
     setGeneratingDescription(true);
-    setError(null);
-
     try {
       const response = await eventsAPI.generateDescription({
         title: formData.title,
@@ -60,48 +70,39 @@ const CreateEvent = () => {
           ...prev,
           description: response.description,
         }));
+        toast.success('Description generated!');
       }
-    } catch (err: unknown) {
-      if (err && typeof err === 'object' && 'response' in err) {
-        const axiosError = err as { response?: { data?: { message?: string } } };
-        setError(axiosError.response?.data?.message || 'Failed to generate description. Please try again.');
-      } else if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('Failed to generate description. Please try again.');
-      }
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'AI generation failed. Please try manually.');
     } finally {
       setGeneratingDescription(false);
     }
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError(null);
-    setLoading(true);
-
+    
     if (!image) {
-      setError('Please select an image');
-      setLoading(false);
+      toast.error('Please select an event image');
       return;
     }
 
-    try {
-      // Validate date
-      if (!formData.date) {
-        setError('Please select a date and time');
-        setLoading(false);
-        return;
-      }
+    if (!formData.date) {
+      toast.error('Please select a date and time');
+      return;
+    }
 
+    setLoading(true);
+
+    try {
       const formDataToSend = new FormData();
       formDataToSend.append('title', formData.title.trim());
+      formDataToSend.append('category', formData.category);
       formDataToSend.append('description', formData.description.trim());
       
-      // Convert datetime-local to ISO string
       const dateValue = new Date(formData.date);
       if (isNaN(dateValue.getTime())) {
-        setError('Invalid date format');
+        toast.error('Invalid date format');
         setLoading(false);
         return;
       }
@@ -112,161 +113,185 @@ const CreateEvent = () => {
       formDataToSend.append('image', image);
 
       const response = await eventsAPI.create(formDataToSend);
+      toast.success('Event created successfully!');
       navigate(`/events/${response.event._id}`);
-    } catch (err: unknown) {
-      console.error('Create event error:', err);
-      
-      // Extract error message from axios error
-      if (err && typeof err === 'object' && 'response' in err) {
-        const axiosError = err as any;
-        
-        // Log the full response for debugging
-        console.error('Full error response:', axiosError.response?.data);
-        console.error('Error status:', axiosError.response?.status);
-        
-        const errorData = axiosError.response?.data;
-        let errorMessage = errorData?.message || errorData?.error || 'Failed to create event';
-        
-        // Add received fields info if available
-        if (errorData?.received) {
-          errorMessage += `. Received: ${JSON.stringify(errorData.received)}`;
-        }
-        
-        setError(errorMessage);
-      } else if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('An unexpected error occurred. Please try again.');
-      }
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Failed to create event');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="container">
-      <div className="form-container">
-        <h1 className="form-title">Create New Event</h1>
-        {error && <div className="error-message">{error}</div>}
+    <div className="min-h-screen bg-surface py-10">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div className="mb-6">
+          <Link to="/events" className="inline-flex items-center gap-1 text-text-secondary hover:text-primary transition-colors font-medium">
+            <ArrowLeft className="w-4 h-4" /> Back to Events
+          </Link>
+        </div>
 
-        <form onSubmit={handleSubmit} className="event-form">
-          <div className="form-group">
-            <label htmlFor="title">Event Title *</label>
-            <input
-              type="text"
-              id="title"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              required
-              className="form-input"
-              placeholder="Enter event title"
-            />
+        <div className="bg-white rounded-2xl shadow-sm border border-border overflow-hidden">
+          <div className="p-6 md:p-10 border-b border-border bg-gray-50">
+            <h1 className="text-3xl font-extrabold text-text-primary">Create New Event</h1>
+            <p className="text-text-secondary mt-2">Fill in the details below to host your next gathering.</p>
           </div>
 
-          <div className="form-group">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-              <label htmlFor="description">Description *</label>
-              <button
-                type="button"
-                onClick={handleGenerateDescription}
-                disabled={generatingDescription || !formData.title.trim() || !formData.location.trim()}
-                className="button button-ai"
-                style={{ fontSize: '0.85rem', padding: '0.5rem 1rem' }}
-              >
-                {generatingDescription ? '🔄 Generating...' : '✨ AI Generate'}
-              </button>
-            </div>
-            <textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              required
-              rows={5}
-              className="form-textarea"
-              placeholder="Describe your event or click 'AI Generate' to create one automatically"
-            />
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="date">Date & Time *</label>
-              <input
-                type="datetime-local"
-                id="date"
-                name="date"
-                value={formData.date}
+          <form onSubmit={handleSubmit} className="p-6 md:p-10 space-y-8">
+            
+            {/* Basic Info */}
+            <div className="space-y-6">
+              <h2 className="text-xl font-bold text-text-primary border-b border-border pb-2">Basic Information</h2>
+              
+              <Input
+                id="title"
+                name="title"
+                type="text"
+                label="Event Title"
+                placeholder="E.g., Summer Music Festival 2026"
+                value={formData.title}
                 onChange={handleChange}
                 required
-                className="form-input"
               />
-            </div>
 
-            <div className="form-group">
-              <label htmlFor="capacity">Capacity *</label>
-              <input
-                type="number"
-                id="capacity"
-                name="capacity"
-                value={formData.capacity}
-                onChange={handleChange}
-                required
-                min={1}
-                className="form-input"
-              />
-            </div>
-          </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-1">
+                  <label htmlFor="category" className="block text-sm font-medium text-text-primary">Category</label>
+                  <select
+                    id="category"
+                    name="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                    className="block w-full px-4 py-2 border border-border rounded-lg bg-white text-text-primary focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow"
+                    required
+                  >
+                    {CATEGORIES.map(cat => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
+                </div>
 
-          <div className="form-group">
-            <label htmlFor="location">Location *</label>
-            <input
-              type="text"
-              id="location"
-              name="location"
-              value={formData.location}
-              onChange={handleChange}
-              required
-              className="form-input"
-              placeholder="Enter event location"
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="image">Event Image *</label>
-            <input
-              type="file"
-              id="image"
-              name="image"
-              accept="image/*"
-              onChange={handleImageChange}
-              required
-              className="form-input-file"
-            />
-            {imagePreview && (
-              <div className="image-preview">
-                <img src={imagePreview} alt="Preview" />
+                <Input
+                  id="location"
+                  name="location"
+                  type="text"
+                  label="Location"
+                  placeholder="Where is it happening?"
+                  value={formData.location}
+                  onChange={handleChange}
+                  required
+                />
               </div>
-            )}
-          </div>
 
-          <div className="form-actions">
-            <button type="submit" className="button button-primary" disabled={loading}>
-              {loading ? 'Creating...' : 'Create Event'}
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate('/events')}
-              className="button button-secondary"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Input
+                  id="date"
+                  name="date"
+                  type="datetime-local"
+                  label="Date & Time"
+                  value={formData.date}
+                  onChange={handleChange}
+                  required
+                />
+
+                <Input
+                  id="capacity"
+                  name="capacity"
+                  type="number"
+                  label="Capacity"
+                  value={formData.capacity}
+                  onChange={handleChange}
+                  required
+                  min={1}
+                />
+              </div>
+            </div>
+
+            {/* Description & AI */}
+            <div className="space-y-6 pt-4">
+              <div className="flex items-center justify-between border-b border-border pb-2">
+                <h2 className="text-xl font-bold text-text-primary">Event Description</h2>
+                <Button 
+                  type="button" 
+                  variant="secondary" 
+                  className="flex items-center gap-2 py-1.5 px-3 text-sm"
+                  onClick={handleGenerateDescription}
+                  isLoading={generatingDescription}
+                  disabled={!formData.title.trim() || !formData.location.trim()}
+                >
+                  <Sparkles className="w-4 h-4 text-accent" /> AI Generate
+                </Button>
+              </div>
+
+              <div className="space-y-1">
+                <textarea
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  required
+                  rows={6}
+                  className="block w-full px-4 py-3 border border-border rounded-lg bg-white text-text-primary focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow resize-y"
+                  placeholder="Describe your event or click 'AI Generate' above to have Gemini write one for you!"
+                />
+              </div>
+            </div>
+
+            {/* Image Upload */}
+            <div className="space-y-6 pt-4">
+              <h2 className="text-xl font-bold text-text-primary border-b border-border pb-2">Cover Image</h2>
+              
+              <div 
+                className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors cursor-pointer ${imagePreview ? 'border-primary/50 bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-gray-50'}`}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <input
+                  type="file"
+                  id="image"
+                  name="image"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                  ref={fileInputRef}
+                />
+                
+                {imagePreview ? (
+                  <div className="flex flex-col items-center">
+                    <img src={imagePreview} alt="Preview" className="h-48 object-cover rounded-lg shadow-sm mb-4" />
+                    <p className="text-sm font-medium text-primary flex items-center gap-2">
+                      <ImageIcon className="w-4 h-4" /> Click to change image
+                    </p>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-6">
+                    <div className="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-4">
+                      <UploadCloud className="w-8 h-8" />
+                    </div>
+                    <p className="text-lg font-medium text-text-primary mb-1">Click to upload an image</p>
+                    <p className="text-sm text-text-secondary">PNG, JPG up to 5MB</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="pt-6 flex gap-4">
+              <Link to="/events" className="flex-1">
+                <Button type="button" variant="secondary" className="w-full py-3">
+                  Cancel
+                </Button>
+              </Link>
+              <Button type="submit" variant="primary" className="flex-[2] py-3 text-lg" isLoading={loading}>
+                Create Event
+              </Button>
+            </div>
+
+          </form>
+        </div>
+
       </div>
     </div>
   );
 };
 
 export default CreateEvent;
-

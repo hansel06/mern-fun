@@ -3,6 +3,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import authRoutes from './routes/authRoutes.js';
 import eventRoutes from './routes/eventRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
 const app = express();
 
@@ -48,6 +49,7 @@ app.get('/', (req, res) => {
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
+app.use('/api/users', userRoutes);
 
 // 404 handler for undefined routes
 app.use((req, res) => {

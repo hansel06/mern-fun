@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { CalendarPlus, Users, Sparkles, ArrowRight } from 'lucide-react';
 import Button from '../components/ui/Button';
 import EventCard from '../components/EventCard';
@@ -7,6 +8,7 @@ import SkeletonCard from '../components/ui/SkeletonCard';
 import axios from 'axios';
 
 const LandingPage = () => {
+  const { user } = useAuth();
   const [featuredEvents, setFeaturedEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -42,7 +44,7 @@ const LandingPage = () => {
                 Browse Events
               </Button>
             </Link>
-            <Link to="/signup">
+            <Link to={user ? "/create-event" : "/signup"}>
               <Button variant="secondary" className="w-full sm:w-auto text-lg px-8 py-4 flex items-center gap-2">
                 Start Hosting <ArrowRight className="w-5 h-5" />
               </Button>

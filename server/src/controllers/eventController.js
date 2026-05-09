@@ -103,11 +103,11 @@ export const createEvent = async (req, res) => {
     }
 
     // Handle Cloudinary errors
-    if (error.message && (error.message.includes('cloudinary') || error.message.includes('Cloudinary'))) {
+    if (error.http_code || (error.message && (error.message.includes('cloudinary') || error.message.includes('Cloudinary') || error.message.includes('cloud_name')))) {
       return res.status(400).json({
         success: false,
-        message: 'Image upload failed. Please check Cloudinary configuration.',
-        error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        message: `Image upload failed. Cloudinary says: ${error.message}`,
+        error: process.env.NODE_ENV !== 'production' ? error.message : undefined
       });
     }
 
@@ -121,8 +121,8 @@ export const createEvent = async (req, res) => {
 
     res.status(500).json({
       success: false,
-      message: 'Server error',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      message: process.env.NODE_ENV !== 'production' ? `Server error: ${error.message}` : 'Server error',
+      error: process.env.NODE_ENV !== 'production' ? error.message : undefined
     });
   }
 };

@@ -36,6 +36,9 @@ export interface UpdateEventData {
 export interface EventsResponse {
   success: boolean;
   count: number;
+  totalCount: number;
+  totalPages: number;
+  currentPage: number;
   events: Event[];
 }
 

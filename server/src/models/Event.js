@@ -22,6 +22,12 @@ const eventSchema = new mongoose.Schema({
     required: [true, 'Please provide an event location'],
     trim: true
   },
+  category: {
+    type: String,
+    required: [true, 'Please provide an event category'],
+    enum: ['Music', 'Tech', 'Sports', 'Networking', 'Art', 'Food', 'Other'],
+    default: 'Other'
+  },
   capacity: {
     type: Number,
     required: [true, 'Please provide event capacity'],

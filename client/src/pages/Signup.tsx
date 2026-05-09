@@ -3,100 +3,114 @@ import type { FormEvent } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
+import Input from '../components/ui/Input';
+import Button from '../components/ui/Button';
 
 const Signup = () => {
-  const [name, setName] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | undefined>(undefined);
+  const [loading, setLoading] = useState(false);
+  
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError(null);
+    setError(undefined);
     setLoading(true);
 
     try {
       const response = await authAPI.signup({ name, email, password });
       login(response.token, response.user);
       navigate('/events');
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else if (err && typeof err === 'object' && 'response' in err) {
-        const axiosError = err as { response?: { data?: { message?: string } } };
-        setError(axiosError.response?.data?.message || 'Signup failed. Please try again.');
-      } else {
-        setError('An unexpected error occurred. Please try again.');
-      }
+    } catch (err: any) {
+      const message = err.response?.data?.message || 'Signup failed. Please try again.';
+      setError(message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <h1 className="auth-title">Sign Up</h1>
-        <p className="auth-subtitle">Create your account to get started.</p>
-
-        {error && <div className="error-message">{error}</div>}
-
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group">
-            <label htmlFor="name">Name</label>
-            <input
-              type="text"
+    <div className="min-h-[85vh] flex items-center justify-center bg-surface py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 bg-white p-8 md:p-10 rounded-3xl shadow-xl border border-border">
+        <div className="text-center">
+          <h2 className="mt-2 text-3xl font-extrabold text-text-primary tracking-tight">
+            Create an Account
+          </h2>
+          <p className="mt-2 text-sm text-text-secondary">
+            Join EventSphere to start hosting events
+          </p>
+        </div>
+        
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="space-y-5">
+            <Input
               id="name"
+              type="text"
+              label="Full Name"
+              placeholder="Enter your name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
-              className="form-input"
-              placeholder="Enter your name"
             />
-          </div>
 
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
+            <Input
               id="email"
+              type="email"
+              label="Email address"
+              placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="form-input"
-              placeholder="Enter your email"
+              error={error?.toLowerCase().includes('email') ? error : undefined}
             />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
+            
+            <Input
               id="password"
+              type="password"
+              label="Password"
+              placeholder="Create a password (min 6 chars)"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="form-input"
-              placeholder="Enter your password (min 6 characters)"
               minLength={6}
+              error={error?.toLowerCase().includes('password') ? error : undefined}
             />
           </div>
 
-          <button type="submit" className="auth-button" disabled={loading}>
-            {loading ? 'Creating account...' : 'Sign Up'}
-          </button>
+          {/* Catch-all error for general failures */}
+          {error && !error.toLowerCase().includes('email') && !error.toLowerCase().includes('password') && (
+            <div className="text-sm text-danger text-center bg-danger/10 p-3 rounded-lg">
+              {error}
+            </div>
+          )}
+
+          <div>
+            <Button
+              type="submit"
+              variant="primary"
+              className="w-full py-3 text-lg"
+              isLoading={loading}
+            >
+              Sign Up
+            </Button>
+          </div>
         </form>
 
-        <p className="auth-footer">
-          Already have an account? <Link to="/login">Login</Link>
-        </p>
+        <div className="text-center mt-6">
+          <p className="text-sm text-text-secondary">
+            Already have an account?{' '}
+            <Link to="/login" className="font-semibold text-primary hover:text-primary-light transition-colors">
+              Sign in
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
 };
 
 export default Signup;
-

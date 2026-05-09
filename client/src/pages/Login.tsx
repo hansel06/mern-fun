@@ -1,103 +1,111 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
-import AlertModal from '../components/AlertModal';
+import Input from '../components/ui/Input';
+import Button from '../components/ui/Button';
 
 const Login = () => {
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | undefined>(undefined);
+  const [loading, setLoading] = useState(false);
+  
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError(null);
+    setError(undefined);
     setLoading(true);
 
     try {
       const response = await authAPI.login({ email, password });
       login(response.token, response.user);
-      navigate('/events');
-    } catch (err: unknown) {
-      if (err && typeof err === 'object' && 'response' in err) {
-        const axiosError = err as { response?: { data?: { message?: string }; status?: number } };
-        const status = axiosError.response?.status;
-        const message = axiosError.response?.data?.message || 'Login failed';
-        
-        // Show popup for authentication errors (401)
-        if (status === 401 || message.toLowerCase().includes('invalid') || message.toLowerCase().includes('email') || message.toLowerCase().includes('password')) {
-          setError('Invalid email or password. Please try again.');
-        } else {
-          setError(message);
-        }
-      } else if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('An unexpected error occurred. Please try again.');
-      }
+      
+      // Navigate to returnUrl if it exists, otherwise default to /events
+      const searchParams = new URLSearchParams(location.search);
+      const returnUrl = searchParams.get('returnUrl');
+      navigate(returnUrl || '/events');
+      
+    } catch (err: any) {
+      const message = err.response?.data?.message || 'Login failed. Please try again.';
+      setError(message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="auth-container">
-      {error && (
-        <AlertModal
-          message={error}
-          type="error"
-          onClose={() => setError(null)}
-          autoClose={5000}
-        />
-      )}
-      <div className="auth-card">
-        <h1 className="auth-title">Login</h1>
-        <p className="auth-subtitle">Welcome back! Please login to your account.</p>
-
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
+    <div className="min-h-[85vh] flex items-center justify-center bg-surface py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 bg-white p-8 md:p-10 rounded-3xl shadow-xl border border-border">
+        <div className="text-center">
+          <h2 className="mt-2 text-3xl font-extrabold text-text-primary tracking-tight">
+            Welcome Back
+          </h2>
+          <p className="mt-2 text-sm text-text-secondary">
+            Sign in to your account to continue
+          </p>
+        </div>
+        
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="space-y-5">
+            <Input
               id="email"
+              type="email"
+              label="Email address"
+              placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="form-input"
-              placeholder="Enter your email"
+              error={error?.toLowerCase().includes('email') ? error : undefined}
             />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
+            
+            <Input
               id="password"
+              type="password"
+              label="Password"
+              placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="form-input"
-              placeholder="Enter your password"
               minLength={6}
+              error={error?.toLowerCase().includes('password') || error?.toLowerCase().includes('invalid') ? error : undefined}
             />
           </div>
 
-          <button type="submit" className="auth-button" disabled={loading}>
-            {loading ? 'Logging in...' : 'Login'}
-          </button>
+          {/* Catch-all error for general failures */}
+          {error && !error.toLowerCase().includes('email') && !error.toLowerCase().includes('password') && !error.toLowerCase().includes('invalid') && (
+            <div className="text-sm text-danger text-center bg-danger/10 p-3 rounded-lg">
+              {error}
+            </div>
+          )}
+
+          <div>
+            <Button
+              type="submit"
+              variant="primary"
+              className="w-full py-3 text-lg"
+              isLoading={loading}
+            >
+              Sign In
+            </Button>
+          </div>
         </form>
 
-        <p className="auth-footer">
-          Don't have an account? <Link to="/signup">Sign up</Link>
-        </p>
+        <div className="text-center mt-6">
+          <p className="text-sm text-text-secondary">
+            Don't have an account?{' '}
+            <Link to="/signup" className="font-semibold text-primary hover:text-primary-light transition-colors">
+              Sign up
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
 };
 
 export default Login;
-

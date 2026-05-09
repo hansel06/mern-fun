@@ -132,13 +132,41 @@ export const createEvent = async (req, res) => {
 // @access  Public
 export const getEvents = async (req, res) => {
   try {
-    const events = await Event.find()
+    const { search, category, page = 1, limit = 9 } = req.query;
+    const query = {};
+
+    // Text search
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: 'i' } },
+        { location: { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    // Category filter
+    if (category && category !== 'All') {
+      query.category = category;
+    }
+
+    // Pagination calculations
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+    const skip = (pageNum - 1) * limitNum;
+
+    // Fetch events and total count
+    const totalCount = await Event.countDocuments(query);
+    const events = await Event.find(query)
       .populate('createdBy', 'name email')
-      .sort({ date: 1 }); // Sort ascending (earliest first)
+      .sort({ date: 1 }) // Upcoming first
+      .skip(skip)
+      .limit(limitNum);
 
     res.status(200).json({
       success: true,
       count: events.length,
+      totalCount,
+      totalPages: Math.ceil(totalCount / limitNum),
+      currentPage: pageNum,
       events
     });
   } catch (error) {

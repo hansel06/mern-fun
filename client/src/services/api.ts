@@ -136,6 +136,11 @@ export const usersAPI = {
   updatePassword: async (data: { currentPassword?: string; newPassword?: string }): Promise<{ success: boolean; message: string }> => {
     const response = await api.put('/users/password', data);
     return response.data;
+  },
+
+  deleteAccount: async (): Promise<{ success: boolean; message: string }> => {
+    const response = await api.delete('/users/account');
+    return response.data;
   }
 };
 

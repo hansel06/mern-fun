@@ -147,7 +147,7 @@ const EventDetail = () => {
           
           {/* Left Column (Content) */}
           <div className="md:col-span-2 space-y-8">
-            <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-border">
+            <div className="bg-surface-elevated rounded-2xl p-6 md:p-8 shadow-sm border border-border">
               <div className="flex items-center gap-4 text-text-secondary mb-8 border-b border-border pb-6">
                 <Link to="/events" className="flex items-center gap-1 hover:text-primary transition-colors">
                   <ArrowLeft className="w-4 h-4" /> Back
@@ -190,7 +190,7 @@ const EventDetail = () => {
 
           {/* Right Column (Sticky Sidebar) */}
           <div className="md:col-span-1 sticky top-24 space-y-6">
-            <div className="bg-white rounded-2xl p-6 shadow-md border border-border">
+            <div className="bg-surface-elevated rounded-2xl p-6 shadow-md border border-border">
               
               <div className="space-y-4 mb-8">
                 <div className="flex items-start gap-3">
@@ -243,7 +243,7 @@ const EventDetail = () => {
                     <Button variant="primary" className="w-full">Login to RSVP</Button>
                   </Link>
                 ) : isPastEvent ? (
-                  <div className="bg-gray-100 text-gray-500 py-3 rounded-lg text-center font-medium">
+                  <div className="bg-surface text-text-secondary py-3 rounded-lg text-center font-medium">
                     Event has ended
                   </div>
                 ) : userIsAttending ? (

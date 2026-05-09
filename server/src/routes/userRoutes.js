@@ -3,7 +3,8 @@ import {
   getMyEvents, 
   getMyRsvps, 
   updateProfile, 
-  updatePassword 
+  updatePassword,
+  deleteAccount
 } from '../controllers/userController.js';
 import protect from '../middleware/auth.js';
 
@@ -16,5 +17,6 @@ router.get('/my-events', getMyEvents);
 router.get('/my-rsvps', getMyRsvps);
 router.put('/profile', updateProfile);
 router.put('/password', updatePassword);
+router.delete('/account', deleteAccount);
 
 export default router;

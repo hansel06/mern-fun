@@ -7,7 +7,7 @@ const NotFound = () => {
   return (
     <PageWrapper>
       <div className="min-h-[80vh] bg-surface flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8 text-center bg-white p-10 rounded-2xl shadow-sm border border-border">
+        <div className="max-w-md w-full space-y-8 text-center bg-surface-elevated p-10 rounded-2xl shadow-sm border border-border">
           <div className="flex justify-center">
             <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center text-primary">
               <SearchX className="w-12 h-12" />

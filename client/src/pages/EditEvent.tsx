@@ -199,8 +199,8 @@ const EditEvent = () => {
           </Button>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-border overflow-hidden">
-          <div className="p-6 md:p-10 border-b border-border bg-gray-50">
+        <div className="bg-surface-elevated rounded-2xl shadow-sm border border-border overflow-hidden">
+          <div className="p-6 md:p-10 border-b border-border bg-surface">
             <h1 className="text-3xl font-extrabold text-text-primary">Edit Event</h1>
             <p className="text-text-secondary mt-2">Update the details of your event below.</p>
           </div>
@@ -229,7 +229,7 @@ const EditEvent = () => {
                     name="category"
                     value={formData.category}
                     onChange={handleChange}
-                    className="block w-full px-4 py-2 border border-border rounded-lg bg-white text-text-primary focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow"
+                    className="block w-full px-4 py-2 border border-border rounded-lg bg-surface-elevated text-text-primary focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow"
                     required
                   >
                     {CATEGORIES.map(cat => (
@@ -297,7 +297,7 @@ const EditEvent = () => {
                   onChange={handleChange}
                   required
                   rows={6}
-                  className="block w-full px-4 py-3 border border-border rounded-lg bg-white text-text-primary focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow resize-y"
+                  className="block w-full px-4 py-3 border border-border rounded-lg bg-surface-elevated text-text-primary focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow resize-y"
                 />
               </div>
             </div>
@@ -308,7 +308,7 @@ const EditEvent = () => {
               <p className="text-sm text-text-secondary -mt-4">Leave this alone to keep your current image.</p>
               
               <div 
-                className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors cursor-pointer border-border hover:border-primary/50 hover:bg-gray-50`}
+                className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors cursor-pointer border-border hover:border-primary/50 hover:bg-surface`}
                 onClick={() => fileInputRef.current?.click()}
               >
                 <input

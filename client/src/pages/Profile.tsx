@@ -3,11 +3,13 @@ import { useAuth } from '../context/AuthContext';
 import { usersAPI } from '../services/api';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
-import { User, Lock, Save } from 'lucide-react';
+import { User, Lock, Save, AlertTriangle, Trash2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
 const Profile = () => {
-  const { user, login } = useAuth();
+  const { user, login, logout } = useAuth();
+  const navigate = useNavigate();
   
   // Profile Form State
   const [name, setName] = useState(user?.name || '');
@@ -19,6 +21,9 @@ const Profile = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [passwordError, setPasswordError] = useState<string | undefined>(undefined);
+
+  // Delete Account State
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   // Update name if user context changes
   useEffect(() => {
@@ -78,6 +83,25 @@ const Profile = () => {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    const confirmation = window.prompt(
+      'Are you absolutely sure you want to delete your account? This action cannot be undone and will permanently delete all events you have hosted. Type "DELETE" to confirm.'
+    );
+
+    if (confirmation === 'DELETE') {
+      try {
+        setDeleteLoading(true);
+        await usersAPI.deleteAccount();
+        toast.success('Account deleted successfully');
+        logout();
+        navigate('/');
+      } catch (error: any) {
+        toast.error(error.response?.data?.message || 'Failed to delete account');
+        setDeleteLoading(false);
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-surface py-10">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -89,8 +113,8 @@ const Profile = () => {
 
         <div className="space-y-8">
           {/* General Information Card */}
-          <div className="bg-white rounded-2xl shadow-sm border border-border overflow-hidden">
-            <div className="px-6 py-5 border-b border-border bg-gray-50 flex items-center gap-3">
+          <div className="bg-surface-elevated rounded-2xl shadow-sm border border-border overflow-hidden">
+            <div className="px-6 py-5 border-b border-border bg-surface flex items-center gap-3">
               <User className="w-5 h-5 text-primary" />
               <h2 className="text-xl font-bold text-text-primary">General Information</h2>
             </div>
@@ -138,8 +162,8 @@ const Profile = () => {
           </div>
 
           {/* Security Card */}
-          <div className="bg-white rounded-2xl shadow-sm border border-border overflow-hidden">
-            <div className="px-6 py-5 border-b border-border bg-gray-50 flex items-center gap-3">
+          <div className="bg-surface-elevated rounded-2xl shadow-sm border border-border overflow-hidden">
+            <div className="px-6 py-5 border-b border-border bg-surface flex items-center gap-3">
               <Lock className="w-5 h-5 text-primary" />
               <h2 className="text-xl font-bold text-text-primary">Security</h2>
             </div>
@@ -194,6 +218,31 @@ const Profile = () => {
                   </Button>
                 </div>
               </form>
+            </div>
+          </div>
+
+          {/* Danger Zone */}
+          <div className="bg-surface-elevated rounded-2xl shadow-sm border border-danger/20 overflow-hidden mt-8">
+            <div className="px-6 py-5 border-b border-danger/20 bg-danger/5 flex items-center gap-3">
+              <AlertTriangle className="w-5 h-5 text-danger" />
+              <h2 className="text-xl font-bold text-danger">Danger Zone</h2>
+            </div>
+            
+            <div className="p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+              <div>
+                <h3 className="text-lg font-bold text-text-primary">Delete Account</h3>
+                <p className="text-text-secondary mt-1 max-w-xl">
+                  Permanently delete your account, all your created events, and remove your RSVPs from other events. This action cannot be undone.
+                </p>
+              </div>
+              <Button 
+                variant="danger" 
+                onClick={handleDeleteAccount}
+                isLoading={deleteLoading}
+                className="flex items-center gap-2 whitespace-nowrap"
+              >
+                <Trash2 className="w-4 h-4" /> Delete Account
+              </Button>
             </div>
           </div>
 

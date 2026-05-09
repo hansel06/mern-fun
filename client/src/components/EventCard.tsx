@@ -38,7 +38,7 @@ const EventCard = ({ event, compact = false }: EventCardProps) => {
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-accent scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300 z-10" />
 
       {/* Image Section */}
-      <div className={`relative w-full ${compact ? 'aspect-[2/1]' : 'aspect-video'} bg-gray-100 overflow-hidden`}>
+      <div className={`relative w-full ${compact ? 'aspect-[2/1]' : 'aspect-video'} bg-surface overflow-hidden`}>
         <img 
           src={event.imageUrl || 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4'} 
           alt={event.title} 
@@ -47,7 +47,7 @@ const EventCard = ({ event, compact = false }: EventCardProps) => {
         
         {/* Category Badge */}
         {event.category && (
-          <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-primary shadow-sm">
+          <div className="absolute top-3 left-3 bg-surface-elevated/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-primary shadow-sm">
             {event.category}
           </div>
         )}

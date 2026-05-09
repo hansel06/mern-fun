@@ -133,3 +133,34 @@ export const updatePassword = async (req, res) => {
     });
   }
 };
+
+// @desc    Delete user account and their events
+// @route   DELETE /api/users/account
+// @access  Protected
+export const deleteAccount = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // 1. Delete all events created by this user
+    await Event.deleteMany({ createdBy: userId });
+
+    // 2. Remove user from all attendees arrays in other events
+    await Event.updateMany(
+      { attendees: userId },
+      { $pull: { attendees: userId } }
+    );
+
+    // 3. Delete the user account
+    await User.findByIdAndDelete(userId);
+
+    res.status(200).json({
+      success: true,
+      message: 'Account deleted successfully'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Server error'
+    });
+  }
+};

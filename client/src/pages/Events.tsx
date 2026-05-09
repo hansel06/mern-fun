@@ -87,16 +87,16 @@ const Events = () => {
         </div>
 
         {/* Filters section */}
-        <div className="bg-white p-4 rounded-xl border border-border shadow-sm mb-8 flex flex-col md:flex-row gap-4 items-end">
+        <div className="bg-surface-elevated p-4 rounded-xl border border-border shadow-sm mb-8 flex flex-col md:flex-row gap-4 items-end">
           <div className="w-full md:flex-1">
             <label className="block text-sm font-medium text-text-primary mb-1">Search</label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-gray-400" />
+                <Search className="h-5 w-5 text-text-secondary" />
               </div>
               <input
                 type="text"
-                className="block w-full pl-10 pr-3 py-2 border border-border rounded-lg bg-white text-text-primary focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow outline-none"
+                className="block w-full pl-10 pr-3 py-2 border border-border rounded-lg bg-surface-elevated text-text-primary focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow outline-none"
                 placeholder="Search by title or location..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -108,10 +108,10 @@ const Events = () => {
             <label className="block text-sm font-medium text-text-primary mb-1">Category</label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <SlidersHorizontal className="h-5 w-5 text-gray-400" />
+                <SlidersHorizontal className="h-5 w-5 text-text-secondary" />
               </div>
               <select
-                className="block w-full pl-10 pr-10 py-2 border border-border rounded-lg bg-white text-text-primary focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow outline-none appearance-none"
+                className="block w-full pl-10 pr-10 py-2 border border-border rounded-lg bg-surface-elevated text-text-primary focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow outline-none appearance-none"
                 value={category}
                 onChange={handleCategoryChange}
               >
@@ -133,7 +133,7 @@ const Events = () => {
             {[...Array(6)].map((_, i) => <SkeletonCard key={i} />)}
           </div>
         ) : events.length === 0 ? (
-          <div className="bg-white rounded-xl border border-border p-12 text-center">
+          <div className="bg-surface-elevated rounded-xl border border-border p-12 text-center">
             <div className="w-16 h-16 bg-surface rounded-full flex items-center justify-center mx-auto mb-4">
               <Search className="w-8 h-8 text-text-secondary" />
             </div>

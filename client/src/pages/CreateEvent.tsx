@@ -12,6 +12,7 @@ const CATEGORIES = ['Music', 'Tech', 'Sports', 'Networking', 'Art', 'Food', 'Oth
 const CreateEvent = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const lastGeneratedTime = useRef<number>(0);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -55,6 +56,14 @@ const CreateEvent = () => {
       toast.error('Please enter an event title and location first');
       return;
     }
+
+    const now = Date.now();
+    if (now - lastGeneratedTime.current < 10000) {
+      toast.error('Please wait 10 seconds before generating again');
+      return;
+    }
+
+    lastGeneratedTime.current = now;
 
     setGeneratingDescription(true);
     try {
@@ -132,8 +141,8 @@ const CreateEvent = () => {
           </Link>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-border overflow-hidden">
-          <div className="p-6 md:p-10 border-b border-border bg-gray-50">
+        <div className="bg-surface-elevated rounded-2xl shadow-sm border border-border overflow-hidden">
+          <div className="p-6 md:p-10 border-b border-border bg-surface">
             <h1 className="text-3xl font-extrabold text-text-primary">Create New Event</h1>
             <p className="text-text-secondary mt-2">Fill in the details below to host your next gathering.</p>
           </div>
@@ -163,7 +172,7 @@ const CreateEvent = () => {
                     name="category"
                     value={formData.category}
                     onChange={handleChange}
-                    className="block w-full px-4 py-2 border border-border rounded-lg bg-white text-text-primary focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow"
+                    className="block w-full px-4 py-2 border border-border rounded-lg bg-surface-elevated text-text-primary focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow"
                     required
                   >
                     {CATEGORIES.map(cat => (
@@ -232,7 +241,7 @@ const CreateEvent = () => {
                   onChange={handleChange}
                   required
                   rows={6}
-                  className="block w-full px-4 py-3 border border-border rounded-lg bg-white text-text-primary focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow resize-y"
+                  className="block w-full px-4 py-3 border border-border rounded-lg bg-surface-elevated text-text-primary focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow resize-y"
                   placeholder="Describe your event or click 'AI Generate' above to have Gemini write one for you!"
                 />
               </div>
@@ -243,7 +252,7 @@ const CreateEvent = () => {
               <h2 className="text-xl font-bold text-text-primary border-b border-border pb-2">Cover Image</h2>
               
               <div 
-                className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors cursor-pointer ${imagePreview ? 'border-primary/50 bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-gray-50'}`}
+                className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors cursor-pointer ${imagePreview ? 'border-primary/50 bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-surface'}`}
                 onClick={() => fileInputRef.current?.click()}
               >
                 <input

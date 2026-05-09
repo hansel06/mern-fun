@@ -29,7 +29,7 @@ const LandingPage = () => {
   return (
     <div className="flex flex-col min-h-screen bg-surface">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-white border-b border-border py-20 sm:py-32">
+      <section className="relative overflow-hidden bg-surface-elevated border-b border-border py-20 sm:py-32">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-text-primary mb-6">
@@ -61,21 +61,21 @@ const LandingPage = () => {
             <p className="mt-4 text-text-secondary">Three simple steps to your next great gathering.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-10">
-            <div className="bg-white p-8 rounded-2xl border border-border text-center shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-surface-elevated p-8 rounded-2xl border border-border text-center shadow-sm hover:shadow-md transition-shadow">
               <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 text-primary">
                 <Sparkles className="w-7 h-7" />
               </div>
               <h3 className="text-xl font-bold text-text-primary mb-3">1. Create with AI</h3>
               <p className="text-text-secondary">Just enter a title and location, and let our Gemini AI write the perfect engaging description for your event.</p>
             </div>
-            <div className="bg-white p-8 rounded-2xl border border-border text-center shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-surface-elevated p-8 rounded-2xl border border-border text-center shadow-sm hover:shadow-md transition-shadow">
               <div className="w-14 h-14 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-6 text-accent">
                 <Users className="w-7 h-7" />
               </div>
               <h3 className="text-xl font-bold text-text-primary mb-3">2. Invite People</h3>
               <p className="text-text-secondary">Share your public event page instantly. Attendees can securely RSVP and see capacity limits in real-time.</p>
             </div>
-            <div className="bg-white p-8 rounded-2xl border border-border text-center shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-surface-elevated p-8 rounded-2xl border border-border text-center shadow-sm hover:shadow-md transition-shadow">
               <div className="w-14 h-14 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-6 text-success">
                 <CalendarPlus className="w-7 h-7" />
               </div>
@@ -87,7 +87,7 @@ const LandingPage = () => {
       </section>
 
       {/* Featured Events */}
-      <section className="py-20 bg-white border-t border-border">
+      <section className="py-20 bg-surface-elevated border-t border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-end mb-10">
             <div>

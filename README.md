@@ -120,7 +120,7 @@ If the event is full, the query simply matches 0 documents, preventing overbooki
 
 Built with ❤️ by **Hansel Thomas Dsouza**
 
-- LinkedIn: [Your Profile](https://linkedin.com/in/yourprofile)
+- LinkedIn: [Hansel Thomas D'Souza](https://linkedin.com/in/yourprofile)
 - GitHub: [Hansel06](https://github.com/hansel06)
 
 ---

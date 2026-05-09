@@ -57,12 +57,19 @@ const Dashboard = () => {
     }
   };
 
+  const now = new Date();
+  const activeHosted = hostedEvents.filter(e => new Date(e.date) >= now);
+  const pastHosted = hostedEvents.filter(e => new Date(e.date) < now);
+
+  const activeAttending = attendedEvents.filter(e => new Date(e.date) >= now);
+  const pastAttending = attendedEvents.filter(e => new Date(e.date) < now);
+
   return (
     <div className="min-h-screen bg-surface py-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header Section */}
-        <div className="bg-white rounded-2xl p-8 shadow-sm border border-border mb-8 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="bg-surface-elevated rounded-2xl p-8 shadow-sm border border-border mb-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-6">
             <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center text-primary text-3xl font-bold">
               {user?.name.charAt(0).toUpperCase()}
@@ -137,7 +144,7 @@ const Dashboard = () => {
                 </div>
                 
                 {hostedEvents.length === 0 ? (
-                  <div className="bg-white rounded-2xl border border-border p-12 text-center">
+                  <div className="bg-surface-elevated rounded-2xl border border-border p-12 text-center">
                     <div className="w-16 h-16 bg-surface rounded-full flex items-center justify-center mx-auto mb-4">
                       <Calendar className="w-8 h-8 text-text-secondary" />
                     </div>
@@ -148,26 +155,56 @@ const Dashboard = () => {
                     </Link>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {hostedEvents.map(event => (
-                      <div key={event._id} className="relative group">
-                        <EventCard event={event} />
-                        <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Link to={`/events/${event._id}/edit`}>
-                            <button className="bg-white/90 backdrop-blur text-sm font-medium px-3 py-1 rounded-md shadow-sm border border-border hover:bg-gray-50 transition">
-                              Edit
-                            </button>
-                          </Link>
-                          <button 
-                            onClick={() => handleDeleteEvent(event._id)}
-                            className="bg-danger/90 backdrop-blur text-white text-sm font-medium px-3 py-1 rounded-md shadow-sm hover:bg-danger transition"
-                          >
-                            Delete
-                          </button>
+                  <>
+                    {activeHosted.length > 0 ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {activeHosted.map(event => (
+                          <div key={event._id} className="relative group">
+                            <EventCard event={event} />
+                            <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <Link to={`/events/${event._id}/edit`}>
+                                <button className="bg-surface-elevated/90 backdrop-blur text-sm font-medium px-3 py-1 rounded-md shadow-sm border border-border hover:bg-surface transition">
+                                  Edit
+                                </button>
+                              </Link>
+                              <button 
+                                onClick={() => handleDeleteEvent(event._id)}
+                                className="bg-danger/90 backdrop-blur text-white text-sm font-medium px-3 py-1 rounded-md shadow-sm hover:bg-danger transition"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-text-secondary italic">No active hosted events.</p>
+                    )}
+
+                    {pastHosted.length > 0 && (
+                      <div className="mt-12">
+                        <div className="flex items-center gap-4 mb-6">
+                          <h2 className="text-xl font-bold text-text-secondary">Past Events</h2>
+                          <div className="h-px bg-border flex-1"></div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 opacity-60 grayscale-[50%] hover:grayscale-0 transition-all duration-300">
+                          {pastHosted.map(event => (
+                            <div key={event._id} className="relative group">
+                              <EventCard event={event} />
+                              <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button 
+                                  onClick={() => handleDeleteEvent(event._id)}
+                                  className="bg-danger/90 backdrop-blur text-white text-sm font-medium px-3 py-1 rounded-md shadow-sm hover:bg-danger transition"
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       </div>
-                    ))}
-                  </div>
+                    )}
+                  </>
                 )}
               </>
             )}
@@ -179,7 +216,7 @@ const Dashboard = () => {
                 </div>
                 
                 {attendedEvents.length === 0 ? (
-                  <div className="bg-white rounded-2xl border border-border p-12 text-center">
+                  <div className="bg-surface-elevated rounded-2xl border border-border p-12 text-center">
                     <div className="w-16 h-16 bg-surface rounded-full flex items-center justify-center mx-auto mb-4">
                       <CheckCircle className="w-8 h-8 text-text-secondary" />
                     </div>
@@ -190,21 +227,41 @@ const Dashboard = () => {
                     </Link>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {attendedEvents.map(event => (
-                      <div key={event._id} className="relative group">
-                        <EventCard event={event} />
-                        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button 
-                            onClick={() => handleCancelRsvp(event._id)}
-                            className="bg-danger/90 backdrop-blur text-white text-sm font-medium px-3 py-1 rounded-md shadow-sm hover:bg-danger transition"
-                          >
-                            Cancel RSVP
-                          </button>
+                  <>
+                    {activeAttending.length > 0 ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {activeAttending.map(event => (
+                          <div key={event._id} className="relative group">
+                            <EventCard event={event} />
+                            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <button 
+                                onClick={() => handleCancelRsvp(event._id)}
+                                className="bg-danger/90 backdrop-blur text-white text-sm font-medium px-3 py-1 rounded-md shadow-sm hover:bg-danger transition"
+                              >
+                                Cancel RSVP
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-text-secondary italic">No active RSVPs.</p>
+                    )}
+
+                    {pastAttending.length > 0 && (
+                      <div className="mt-12">
+                        <div className="flex items-center gap-4 mb-6">
+                          <h2 className="text-xl font-bold text-text-secondary">Past Events</h2>
+                          <div className="h-px bg-border flex-1"></div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 opacity-60 grayscale-[50%] hover:grayscale-0 transition-all duration-300">
+                          {pastAttending.map(event => (
+                            <EventCard key={event._id} event={event} />
+                          ))}
                         </div>
                       </div>
-                    ))}
-                  </div>
+                    )}
+                  </>
                 )}
               </>
             )}

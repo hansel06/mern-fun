@@ -50,6 +50,10 @@ const eventSchema = new mongoose.Schema({
   timestamps: true // Automatically adds createdAt and updatedAt
 });
 
+eventSchema.index({ date: 1 });
+eventSchema.index({ category: 1 });
+eventSchema.index({ title: 'text', location: 'text' });
+
 const Event = mongoose.model('Event', eventSchema);
 
 export default Event;
